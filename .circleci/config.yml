@@ -68,7 +68,7 @@ jobs:
           name: Back-end build
           command: |
              cd backend
-             sudo npm install -g npm
+             npm install 
              npm run build
       - save_cache:
           paths: [backend/node_modules]
@@ -90,6 +90,9 @@ jobs:
            cd frontend
            npm install
            npm run test
+      - save_cache:
+          paths: [frontend/node_modules]
+          key: frontend-test
 
                 
   test-backend:
@@ -105,9 +108,12 @@ jobs:
       - run:
          name: Run backend test
          command: |
-           cd backend
-           npm install
-           npm run test
+          cd backend
+            npm install
+            npm test
+      - save_cache:
+          paths: [backend/node_modules]
+          key: backend-test
             
   scan-frontend:
     docker:
@@ -123,8 +129,9 @@ jobs:
           name: Scan Frontend
           command: |
             cd frontend
-            npm install
-            npm audit fix --audit-level=critical
+            npm install oauth-sign@^0.9.0
+            npm audit fix --audit-level=critical --force
+            npm audit --audit-level=critical
 
 
   scan-backend:
@@ -142,7 +149,10 @@ jobs:
           command: |
             cd backend
             npm install
+            npm install oauth-sign@^0.9.0
+            npm audit fix --audit-level=critical --force
             npm audit fix --audit-level=critical
+            npm audit fix --force
 
 
   deploy-infrastructure:
