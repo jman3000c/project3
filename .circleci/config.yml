@@ -346,9 +346,7 @@ jobs:
             ls -al
             # Zip the directory
             tar -C backend -czvf artifact.tar.gz .
-
             cd .circleci/ansible
-
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
@@ -363,7 +361,6 @@ jobs:
       # Lightweight Docker image
       - image: python:3.10-alpine3.16 
     steps:
-      # Checkout code from gitt
       - checkout
       - run:
           name: Install dependencies
@@ -418,7 +415,6 @@ jobs:
     docker:
       - image: amazon/aws-cli
     steps:
-      # Checkout code from git
       - checkout
       - run:
           name: Install dependencies
@@ -436,16 +432,16 @@ jobs:
           root: ~/
           paths:
             - project/OldWorkflowID.txt
-      # - run:
-      #     name: Update cloudfront distribution
-      #     command: |
-      #       aws cloudformation deploy \
-      #         --template-file .circleci/files/cloudfront.yml \
-      #         --stack-name InitialStack \
-      #         --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
-      #         --tags project=udapeople
-      #       echo OldWorkflowID: cat ~/project/OldWorkflowID.txt
-      #       echo CurrentWorflowID: "${CIRCLE_WORKFLOW_ID:0:7}"
+      - run:
+          name: Update cloudfront distribution
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/cloudfront.yml \
+              --stack-name InitialStack \
+              --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --tags project=udapeople
+            echo OldWorkflowID: cat ~/project/OldWorkflowID.txt
+            echo CurrentWorflowID: "${CIRCLE_WORKFLOW_ID:0:7}"
       # Here's where you will add some code to rollback on failure  
 
   cleanup:
